@@ -8,8 +8,100 @@ export class PaginationPo extends BaseComponent {
   classActive = '.active';
   btnPrev = 'Previous';
   btnNext = 'Next';
+  classPrevBtn = '.pagination-prev';
+  classNextBtn = '.pagination-next';
+  classFirstBtn = '.pagination-first';
+  classLastBtn = '.pagination-last';
+  classPaginationPage = '.pagination-page';
 
   exampleDemosArr = {
+    basic: 'demo-pagination-basic',
+    manualSwitchingPage: 'demo-pagination-manual-switching',
+    pageChangedEvent: 'demo-pagination-page-changed-event',
+    pagesCountChangedEvent: 'demo-pagination-pages-count-changed',
+    boundaryLinks: 'demo-pagination-boundary-links',
+    directionLinks: 'demo-pagination-direction-links',
+    customLinksContent: 'demo-pagination-custom-links-content',
+    disabled: 'demo-pagination-disabled',
+    limits: 'demo-pagination-limit',
+    centeringPageLink: 'demo-pagination-rotate',
     pager: 'demo-pagination-pager'
   };
+
+  isActivePositionEqual(baseSelector: string, positionNumber: string) {
+    cy.get(`${ baseSelector } ${ this.classActive }`).invoke('text')
+      .should(linkTxt => expect(linkTxt).to.equal(positionNumber));
+  }
+
+  isPagerDisabled(baseSelector: string, pagerName: string, disabled: boolean) {
+    cy.get(`${ baseSelector } ${ this.getPagerSelector(pagerName) }`)
+      .should(disabled ? 'to.have.class' : 'not.to.have.class', 'disabled').invoke('text');
+  }
+
+  isPagerExist(baseSelector: string, pagerName: string, existence: boolean) {
+    cy.get(`${ baseSelector }`)
+      .should(existence ? 'to.have.descendants' : 'not.to.have.descendants', this.getPagerSelector(pagerName));
+  }
+
+  isPagerTxtEqual(baseSelector: string, pagerName: string, expectedTxt: string) {
+    cy.get(`${ baseSelector } ${ this.getPagerSelector(pagerName) }`).invoke('text')
+      .should(pagerTxt => expect(pagerTxt).to.equal(expectedTxt));
+  }
+
+  isPageActive(baseSelector: string, pageNumber: string, active: boolean) {
+    cy.contains(`${baseSelector} li`, pageNumber)
+      .should(active ? 'to.have.class' : 'not.to.have.class', this.classActive);
+  }
+
+  isPageTxtEqual(baseSelector: string, pageIndex: number, expectedText: string) {
+    cy.get(`${baseSelector} li`).eq(pageIndex).invoke('text')
+      .should(pageTxt => expect(pageTxt).to.equal(expectedText));
+  }
+
+  isPageDisabled(baseSelector: string, pageNumber: string, disabled: boolean) {
+    cy.contains(`${ baseSelector } li`, pageNumber)
+      .should(disabled ? 'to.have.class' : 'not.to.have.class', 'disabled');
+  }
+
+  clickOnPage(baseSelector: string, pageNumber: string) {
+    cy.contains(`${ baseSelector } li`, pageNumber).click();
+  }
+
+  clickOnPager(baseSelector: string, pagerName: string) {
+    cy.get(`${ baseSelector } ${ this.getPagerSelector(pagerName) }`).click();
+  }
+
+  clickOnBtn(baseSelector: string, btnName: string) {
+    cy.contains(`${ baseSelector } button`, btnName).click();
+  }
+
+  isPaginationLengthEqual(baseSelector: string, expectedLength: number) {
+    cy.get(`${ baseSelector } ${ this.classPaginationPage}`).should('have.length', expectedLength);
+  }
+
+  /*isActivePageCentered(baseSelector: string, expectedLength: number) {
+    cy.get(`${ baseSelector } ${ this.classPaginationPage} active`).should('have.length', expectedLength);
+  }*/ //TODO
+
+  getPagerSelector(pagerName: string): string {
+    let pagerSelector: string;
+    switch (pagerName) {
+      case 'Next':
+        pagerSelector = this.classNextBtn;
+        break;
+      case 'Previous':
+        pagerSelector = this.classPrevBtn;
+        break;
+      case 'First':
+        pagerSelector = this.classFirstBtn;
+        break;
+      case 'Last':
+        pagerSelector = this.classLastBtn;
+        break;
+      default:
+        pagerSelector = '';
+    }
+
+    return pagerSelector;
+  }
 }

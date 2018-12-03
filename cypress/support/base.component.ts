@@ -13,4 +13,14 @@ export abstract class BaseComponent {
   clickByText(parent: string, text: string) {
     cy.get(parent).contains(text).click();
   }
+
+  isButtonExist(baseSelector: string, buttonName: string, buttonNumber?: number) {
+    cy.get(`${baseSelector} button`).eq(buttonNumber ? buttonNumber : 0).invoke('text')
+      .should(btnTxt => expect(btnTxt).to.equal(buttonName));
+  }
+
+  isPreviewExist(baseSelector: string, previewText: string, previewNumber?: number) {
+    cy.get(`${baseSelector} .card.card-block`).eq(previewNumber ? previewNumber : 0).invoke('text')
+      .should(btnTxt => expect(btnTxt).to.equal(previewText));
+  }
 }
